@@ -9,87 +9,81 @@ const serviceAccount = require("./serviceAccountKey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://mosquitto-d1aa7-default-rtdb.asia-southeast1.firebasedatabase.app",
 });
 
-const db = admin.firestore();
+const rtdb = admin.database();
 
-// ---------- Twilio Init ----------
+// ---------- Twilio ----------
 const client = twilio(
   process.env.TWILIO_SID,
   process.env.TWILIO_TOKEN
 );
 
-// ---------- Express Setup ----------
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
 
-// ---------- Latest Data Cache ----------
-let latestData = {
-  temperature: null,
-  heartRate: null,
-  posture: null,
-  fallDetected: null,
-  emergency: null,
-  timestamp: null,
-};
-
-// Prevent SMS spam
 let lastEmergencySent = false;
 
-// ---------- Routes ----------
-
-// Health check
-app.get("/", (req, res) => {
-  res.send("Patient Monitoring Server is running");
-});
-
-// POST sensor data
-app.post("/data", async (req, res) => {
+// =====================================================
+// ✅ GET REALTIME DATA FROM RTDB
+// =====================================================
+app.get("/data", async (req, res) => {
   try {
-    const data = {
-      ...req.body,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-    };
+    // 🔹 Node-1 health
+    const healthSnap = await rtdb.ref("new_health").get();
+    const health = healthSnap.val() || {};
 
-    // Save to Firestore
-    const docRef = await db.collection("patients").add(data);
+    // 🔹 Node-2 RFID
+    const rfidSnap = await rtdb.ref("rfid/lastEvent").get();
+    const rfid = rfidSnap.val() || {};
 
-    // Update latest cache
-    latestData = { ...req.body, id: docRef.id };
+    // 🔹 Motion
+    const motionSnap = await rtdb.ref("lastEvent").get();
+    const motion = motionSnap.val() || {};
 
-    // ---------- Emergency SMS ----------
-    if (data.emergency === true && !lastEmergencySent) {
+    // 🔹 System
+    const systemSnap = await rtdb.ref("system/status").get();
+    const system = systemSnap.val() || {};
+
+    // 🔹 Emergency logic
+    const emergency =
+      health?.fall === true ||
+      rfid?.alert === true ||
+      motion?.alert === true;
+
+    // 🔹 SMS once
+    if (emergency && !lastEmergencySent) {
       await client.messages.create({
-        body: "🚨 EMERGENCY ALERT! Patient needs help immediately!",
+        body: "🚨 EMERGENCY ALERT! Fall or Intrusion detected!",
         from: process.env.TWILIO_PHONE,
         to: process.env.DOCTOR_PHONE,
       });
-
-      console.log("🚨 SMS SENT");
       lastEmergencySent = true;
     }
 
-    // Reset when emergency ends
-    if (data.emergency === false) {
-      lastEmergencySent = false;
-    }
+    if (!emergency) lastEmergencySent = false;
 
-    res.json({ success: true, id: docRef.id });
+    // 🔹 Response to dashboard
+    res.json({
+      temperature: health?.temperature ?? null,
+      heartRate: health?.bpm ?? null,
+      posture: health?.posture ?? "UNKNOWN",
+      fallDetected: health?.fall ?? false,
+      emergency,
+      systemStatus: system?.value ?? "Offline",
+      timestamp: Date.now(),
+    });
+
   } catch (err) {
-    console.error("❌ ERROR:", err);
-    res.status(500).json({ error: "Failed to save data" });
+    console.error("❌ RTDB ERROR:", err);
+    res.status(500).json({ error: "Failed to read realtime data" });
   }
 });
 
-// GET latest data (for ESP / testing / fallback)
-app.get("/data", (req, res) => {
-  res.json(latestData);
-});
-
-// ---------- Start Server ----------
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

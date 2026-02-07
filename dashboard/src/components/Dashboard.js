@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { auth, db } from "../firebase";
+import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
-import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 
 import Card from "./Card";
 import Graph from "./Graph";
@@ -12,31 +11,43 @@ function Dashboard() {
   const [history, setHistory] = useState([]);
   const audioRef = useRef(null);
 
-  // Firestore listener
+  // 🔹 Fetch realtime data from backend every 2 sec
   useEffect(() => {
-    const q = query(
-      collection(db, "patients"),
-      orderBy("timestamp", "desc"),
-      limit(50)
-    );
+    const fetchData = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/data");
 
-    const unsub = onSnapshot(q, (snap) => {
-      const arr = snap.docs.map((doc) => {
-        const d = doc.data();
-        return {
-          ...d,
-          time: d.timestamp?.toDate().toLocaleTimeString() || "--",
+        if (!res.ok) throw new Error("Server not responding");
+
+        const json = await res.json();
+
+        // attach readable timestamp for graphs/log
+        const enriched = {
+          ...json,
+          timestamp: Date.now(),
         };
-      }).reverse();
 
-      setHistory(arr);
-      setData(arr[arr.length - 1]);
-    });
+        setData(enriched);
 
-    return () => unsub();
+        // avoid pushing duplicate same-value data
+        setHistory((prev) => {
+          if (prev.length && prev[prev.length - 1].timestamp === enriched.timestamp) {
+            return prev;
+          }
+          return [...prev, enriched].slice(-50);
+        });
+      } catch (err) {
+        console.error("❌ Fetch error:", err);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 2000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  // Emergency sound
+  // 🔹 Emergency sound logic
   useEffect(() => {
     if (!audioRef.current) return;
 
@@ -58,7 +69,9 @@ function Dashboard() {
       </div>
 
       {/* ALERT */}
-      {data?.emergency && <div className="alert">🚨 EMERGENCY DETECTED 🚨</div>}
+      {data?.emergency && (
+        <div className="alert">🚨 EMERGENCY DETECTED 🚨</div>
+      )}
 
       {/* CARDS */}
       <div className="cards">
@@ -82,6 +95,7 @@ function Dashboard() {
       {/* ACCESS LOG */}
       <AccessLog history={history} />
 
+      {/* AUDIO */}
       <audio ref={audioRef} src="/sounds/preview.mp3" preload="auto" />
     </div>
   );

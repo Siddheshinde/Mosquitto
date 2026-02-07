@@ -9,8 +9,8 @@ function AccessLog({ history }) {
         <thead>
           <tr>
             <th>Time</th>
-            <th>Temp</th>
-            <th>HR</th>
+            <th>Temp (°C)</th>
+            <th>HR (BPM)</th>
             <th>Posture</th>
             <th>Fall</th>
             <th>Emergency</th>
@@ -18,16 +18,25 @@ function AccessLog({ history }) {
         </thead>
 
         <tbody>
-          {history.map((h, i) => (
-            <tr key={i}>
-              <td>{h.time}</td>
-              <td>{h.temperature}</td>
-              <td>{h.heartRate}</td>
-              <td>{h.posture}</td>
-              <td>{h.fallDetected ? "Yes" : "No"}</td>
-              <td>{h.emergency ? "🚨" : "-"}</td>
-            </tr>
-          ))}
+          {history.map((h, i) => {
+            const time = new Date(h.timestamp).toLocaleTimeString();
+
+            return (
+              <tr
+                key={i}
+                style={{
+                  background: h.emergency ? "rgba(255,0,0,0.15)" : "transparent",
+                }}
+              >
+                <td>{time}</td>
+                <td>{h.temperature ?? "--"}</td>
+                <td>{h.heartRate ?? "--"}</td>
+                <td>{h.posture ?? "--"}</td>
+                <td>{h.fallDetected ? "Yes" : "No"}</td>
+                <td>{h.emergency ? "🚨" : "-"}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
