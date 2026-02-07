@@ -5,32 +5,43 @@ const PORT = 5000;
 
 app.use(express.json());
 
-let latestTemperature = null;
+let latestData = {
+  temperature: null,
+  heartRate: null,
+  posture: null,
+  fallDetected: null,
+  emergency: null,
+};
 
-// Home route
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.send("Patient Monitoring Server is running");
 });
 
-// POST temperature
-app.post("/temperature", (req, res) => {
-  const { temperature } = req.body;
+app.post("/data", (req, res) => {
+  const { temperature, heartRate, posture, fallDetected, emergency } = req.body;
 
-  if (temperature === undefined) {
-    return res.status(400).json({ error: "Temperature is required" });
+  if (temperature === undefined || heartRate === undefined) {
+    return res.status(400).json({
+      error: "temperature and heartRate are required",
+    });
   }
 
-  latestTemperature = temperature;
+  latestData = {
+    temperature,
+    heartRate,
+    posture: posture ?? "unknown",
+    fallDetected: fallDetected ?? false,
+    emergency: emergency ?? false,
+  };
 
   res.json({
-    message: "Temperature received successfully",
-    temperature: latestTemperature,
+    message: "Patient data received successfully",
+    data: latestData,
   });
 });
 
-// GET latest temperature
-app.get("/temperature", (req, res) => {
-  res.json({ latestTemperature });
+app.get("/data", (req, res) => {
+  res.json(latestData);
 });
 
 app.listen(PORT, () => {
