@@ -1,0 +1,96 @@
+body {
+  margin: 0;
+  background: #0f172a;
+  color: white;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.dashboard {
+  padding: 20px;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 20px;
+}
+
+.title {
+  text-align: center;
+  font-size: 28px;
+}
+
+/* ===== CARDS ===== */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+.card {
+  background: #1e293b;
+  border-radius: 14px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.card p {
+  font-size: 22px;
+  margin-top: 10px;
+}
+
+/* colors */
+.red { border-left: 5px solid #ef4444; }
+.blue { border-left: 5px solid #3b82f6; }
+.purple { border-left: 5px solid #a855f7; }
+.orange { border-left: 5px solid #f59e0b; }
+
+.danger {
+  border-left: 5px solid red;
+  background: #7f1d1d;
+}
+
+.safe {
+  border-left: 5px solid #10b981;
+}
+
+/* ===== GRAPHS ===== */
+.graphs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.graphCard {
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 14px;
+}
+
+/* ===== TABLE ===== */
+.tableCard {
+  background: #1e293b;
+  border-radius: 14px;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #334155;
+}
+
+th {
+  background: #020617;
+}
