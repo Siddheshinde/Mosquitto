@@ -45,3 +45,4 @@ dist/
 # Firebase secrets
 
 backend/serviceAccountKey.json
+dashboard/src/serviceAccountKey.json
