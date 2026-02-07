@@ -1,0 +1,12 @@
+import React from "react";
+
+function Card({ title, value, color = "#ffffff" }) {
+  return (
+    <div className="card" style={{ color }}>
+      <h4>{title}</h4>
+      <h2>{value}</h2>
+    </div>
+  );
+}
+
+export default Card;
