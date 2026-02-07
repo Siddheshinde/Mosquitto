@@ -8,5 +8,8 @@
     "start": "node server.js"
   },
   "author": "Siddhesh Shinde | Shruti Jadhav | Sanika Bhoir | Disha Deshmukh",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
