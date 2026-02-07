@@ -10,27 +10,29 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
       setLoading(false);
     });
-    return () => unsub();
+    return () => unsubscribe();
   }, []);
 
-  // 🔹 Loading screen while checking auth
+  // Loading screen while checking authentication
   if (loading) {
     return (
       <div className="center">
         <div className="loader" />
-        <p>Checking authentication...</p>
+        <p style={{ color: "#9ca3af", fontSize: "14px" }}>
+          Checking authentication...
+        </p>
       </div>
     );
   }
 
-  // 🔹 If not logged in → show login
+  // Show login page if not authenticated
   if (!user) return <Login />;
 
-  // 🔹 If logged in → show dashboard
+  // Show dashboard if authenticated
   return <Dashboard />;
 }
 
