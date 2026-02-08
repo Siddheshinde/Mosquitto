@@ -6,7 +6,7 @@ const twilio = require("twilio");
 const crypto = require("crypto");
 
 // Firebase Init
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+const serviceAccount = require("./serviceAccountKey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

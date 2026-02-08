@@ -109,6 +109,11 @@ function Dashboard() {
           <div className="hero-visual">
             <h2 className="section-title">Live Cardiac Monitor</h2>
             <div className="heart-visual-wrapper">
+              <img 
+                src="/Crystal-clear heart with blue veins.png" 
+                alt="Cardiac Monitor"
+                className="heart-background-image"
+              />
               <HeartModel3D
                 heartRate={data?.heartRate || 72}
                 emergency={data?.emergency}
