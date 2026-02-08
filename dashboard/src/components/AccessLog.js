@@ -1,5 +1,4 @@
 import React from "react";
-import heartModel from "./accessLog.css";
 
 
 function AccessLog({ history = [] }) {
