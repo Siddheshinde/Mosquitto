@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "chart.js": "^4.5.1",
     "firebase": "^12.9.0",
+    "lucide-react": "^0.563.0",
     "nodemon": "^3.1.11",
     "react": "^19.2.4",
     "react-chartjs-2": "^5.3.1",
