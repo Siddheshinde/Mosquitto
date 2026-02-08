@@ -5,8 +5,10 @@ require("dotenv").config();
 const twilio = require("twilio");
 const crypto = require("crypto");
 
-// Firebase Init
-const serviceAccount = require("./serviceAccountKey.json");
+/// Replace the old require line with this:
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT 
+  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT) 
+  : require("./serviceAccountKey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
