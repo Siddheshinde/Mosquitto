@@ -1,62 +1,72 @@
+/* ===== GLOBAL ===== */
 body {
   margin: 0;
-  background: #0f172a;
-  color: white;
-  font-family: "Segoe UI", sans-serif;
+  background: #f5f2ea;              /* warm ivory */
+  color: #2b2b2b;                   /* charcoal */
+  font-family: "Georgia", "Segoe UI", serif;
 }
 
+/* ===== DASHBOARD ===== */
 .dashboard {
-  padding: 20px;
-  height: 100vh;
+  padding: 22px;
+  min-height: 100vh;
   display: grid;
   grid-template-rows: auto auto 1fr;
-  gap: 20px;
+  gap: 22px;
 }
 
 .title {
   text-align: center;
   font-size: 28px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: #2c2a26;
 }
 
 /* ===== CARDS ===== */
 .cards {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
+  gap: 16px;
 }
 
 .card {
-  background: #1e293b;
-  border-radius: 14px;
-  padding: 15px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
   text-align: center;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  border-left: 4px solid #bfa76f;   /* antique gold */
 }
 
 .card h3 {
   margin: 0;
-  font-size: 16px;
-  opacity: 0.8;
+  font-size: 15px;
+  font-weight: 500;
+  color: #6b675e;
 }
 
 .card p {
   font-size: 22px;
   margin-top: 10px;
+  font-weight: 600;
+  color: #2b2b2b;
 }
 
-/* colors */
-.red { border-left: 5px solid #ef4444; }
-.blue { border-left: 5px solid #3b82f6; }
-.purple { border-left: 5px solid #a855f7; }
-.orange { border-left: 5px solid #f59e0b; }
+/* ===== STATUS COLORS (SUBTLE) ===== */
+.red { border-left-color: #8b3a3a; }     /* oxblood */
+.blue { border-left-color: #4a5d73; }    /* slate navy */
+.purple { border-left-color: #6d5d7a; }  /* muted plum */
+.orange { border-left-color: #b07a2a; }  /* antique amber */
 
 .danger {
-  border-left: 5px solid red;
-  background: #7f1d1d;
+  background: #f3e1e1;
+  border-left-color: #8b3a3a;
 }
 
 .safe {
-  border-left: 5px solid #10b981;
+  background: #e7efe8;
+  border-left-color: #4f6f52;       /* heritage green */
 }
 
 /* ===== GRAPHS ===== */
@@ -67,30 +77,49 @@ body {
 }
 
 .graphCard {
-  background: #1e293b;
-  padding: 15px;
-  border-radius: 14px;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
 /* ===== TABLE ===== */
 .tableCard {
-  background: #1e293b;
-  border-radius: 14px;
-  padding: 15px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
   overflow-y: auto;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
 th, td {
-  padding: 8px;
+  padding: 10px;
   text-align: center;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid #e3dfd6;
 }
 
 th {
-  background: #020617;
+  background: #ede9df;
+  font-weight: 600;
+  color: #3a372f;
+}
+
+tr:hover {
+  background: #f7f5ef;
+}
+
+/* ===== SCROLLBAR (CLASSY) ===== */
+.tableCard::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tableCard::-webkit-scrollbar-thumb {
+  background: #c8bfae;
+  border-radius: 4px;
 }

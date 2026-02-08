@@ -30,7 +30,7 @@ function Graph({ title, data, dataKey, color, unit = "" }) {
       <h3 className="graph-title">{title}</h3>
       {validData.length === 0 ? (
         <div className="graph-empty">
-          <p>📊 Waiting for sensor data...</p>
+          <p> Waiting for sensor data...</p>
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={280}>

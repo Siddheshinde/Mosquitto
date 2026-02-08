@@ -82,7 +82,7 @@ String encryptData(String plaintext) {
   static unsigned char output[512];
   
   if (dataLength > 512) {
-    Serial.println(" Register with the central server (TPE) Data too large for encryption");
+    Serial.println("Data too large for encryption");
     return "";
   }
   
@@ -99,7 +99,7 @@ String encryptData(String plaintext) {
   mbedtls_aes_free(&aes);
   
   if (ret != 0) {
-    Serial.println(" Register with the central server (TPE) Encryption failed");
+    Serial.println("Encryption failed");
     return "";
   }
   
@@ -110,7 +110,7 @@ String encryptData(String plaintext) {
   ret = mbedtls_base64_encode(base64_output, 1024, &base64_len, output, dataLength);
   
   if (ret != 0) {
-    Serial.println(" Register with the central server (TPE) Base64 encoding failed");
+    Serial.println("Base64 encoding failed");
     return "";
   }
   
@@ -128,7 +128,7 @@ String decryptData(String encrypted) {
                                    encrypted.length());
   
   if (ret != 0) {
-    Serial.println(" Register with the central server (TPE) Base64 decode failed");
+    Serial.println("Base64 decode failed");
     return "";
   }
   
@@ -143,7 +143,7 @@ String decryptData(String encrypted) {
   mbedtls_aes_free(&aes);
   
   if (ret != 0) {
-    Serial.println(" Register with the central server (TPE) Decryption failed");
+    Serial.println("Decryption failed");
     return "";
   }
   
@@ -176,11 +176,11 @@ void setup() {
 
   // Test Firebase connection
   if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("🔥 Testing Firebase REST API connection...");
+    Serial.println("Testing Firebase REST API connection...");
     if (updateFirebaseString("/system/status", "Device B Online")) {
-      Serial.println("✅ Firebase REST API connected successfully");
+      Serial.println("Firebase REST API connected successfully");
     } else {
-      Serial.println(" Register with the central server (TPE) Firebase REST API connection failed");
+      Serial.println("Firebase REST API connection failed");
     }
   }
 
@@ -197,10 +197,10 @@ void setup() {
   xTaskCreatePinnedToCore(taskAlertSender, "AlertSender", 8192, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(taskEmergencyMonitor, "EmergencyMonitor", 8192, NULL, 1, NULL, 0);
 
-  Serial.println("✅ Device B: All FreeRTOS tasks created");
-  Serial.println("🔐 Sentry Unit Active - Monitoring entry point");
-  Serial.println("🚨 Emergency Alert Monitor Active");
-  Serial.println("🔒 Encryption: ENABLED (Individual Field Encryption)");
+  Serial.println("Device B: All FreeRTOS tasks created");
+  Serial.println("Sentry Unit Active - Monitoring entry point");
+  Serial.println("Emergency Alert Monitor Active");
+  Serial.println("Encryption: ENABLED (Individual Field Encryption)");
 }
 
 void loop() {
@@ -223,19 +223,19 @@ void setupWiFi() {
   }
 
   if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\n✅ WiFi Connected!");
+    Serial.println("\nWiFi Connected!");
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
   } else {
-    Serial.println("\n Register with the central server (TPE) WiFi connection failed!");
-    Serial.println("➡️ Continuing without WiFi...");
+    Serial.println("\nWiFi connection failed!");
+    Serial.println("Continuing without WiFi...");
   }
 }
 
 // Firebase REST API Functions
 bool sendToFirebase(String path, String jsonData) {
   if (WiFi.status() != WL_CONNECTED) {
-    Serial.println(" Register with the central server (TPE) WiFi not connected");
+    Serial.println("WiFi not connected");
     return false;
   }
 
@@ -249,12 +249,12 @@ bool sendToFirebase(String path, String jsonData) {
   
   if (httpResponseCode > 0) {
     String response = http.getString();
-    Serial.println("✅ Firebase PUT: " + String(httpResponseCode));
+    Serial.println("Firebase PUT: " + String(httpResponseCode));
     Serial.println("Response: " + response);
     http.end();
     return true;
   } else {
-    Serial.print(" Register with the central server (TPE) Firebase PUT Error: ");
+    Serial.print("Firebase PUT Error: ");
     Serial.println(httpResponseCode);
     http.end();
     return false;
@@ -266,7 +266,7 @@ bool updateFirebaseString(String path, String value) {
   String encryptedValue = encryptData(value);
   
   if (encryptedValue == "") {
-    Serial.println(" Register with the central server (TPE) Encryption failed, using plain value");
+    Serial.println("Encryption failed, using plain value");
     encryptedValue = value;
   }
   
@@ -321,8 +321,8 @@ void taskRFIDScanner(void *parameter) {
         serializeJson(doc, jsonData);
         sendToFirebase("/rfid/lastEvent", jsonData);
         
-        Serial.println("✅ Authorized card: " + uidString);
-        Serial.println("📤 Sent encrypted data to Firebase");
+        Serial.println("Authorized card: " + uidString);
+        Serial.println("Sent encrypted data to Firebase");
       } else {
         soundIntruderAlarm();
         if (xSemaphoreTake(dataMutex, pdMS_TO_TICKS(100))) {
@@ -348,8 +348,8 @@ void taskRFIDScanner(void *parameter) {
         serializeJson(doc, jsonData);
         sendToFirebase("/rfid/lastEvent", jsonData);
         
-        Serial.println("⚠️ Unauthorized card: " + uidString);
-        Serial.println("📤 Sent encrypted data to Firebase");
+        Serial.println("Unauthorized card: " + uidString);
+        Serial.println("Sent encrypted data to Firebase");
       }
       rfid.PICC_HaltA();
     }
@@ -394,8 +394,8 @@ void taskMotionMonitor(void *parameter) {
         serializeJson(doc, jsonData);
         sendToFirebase("/motion/lastEvent", jsonData);
         
-        Serial.println("⚠️ Unauthorized motion detected!");
-        Serial.println("📤 Sent encrypted data to Firebase");
+        Serial.println("Unauthorized motion detected!");
+        Serial.println("Sent encrypted data to Firebase");
       } else {
         // Encrypt individual fields
         String encryptedEvent = encryptData("Authorized Entry");
@@ -411,8 +411,8 @@ void taskMotionMonitor(void *parameter) {
         serializeJson(doc, jsonData);
         sendToFirebase("/motion/lastEvent", jsonData);
         
-        Serial.println("✅ Authorized entry detected");
-        Serial.println("📤 Sent encrypted data to Firebase");
+        Serial.println("Authorized entry detected");
+        Serial.println("Sent encrypted data to Firebase");
       }
     }
 
@@ -462,7 +462,7 @@ void taskEmergencyMonitor(void *parameter) {
         }
 
         if (emergencyDetected) {
-          Serial.println("🚨 EMERGENCY ALERT RECEIVED");
+          Serial.println("EMERGENCY ALERT RECEIVED");
           soundEmergencyAlert();
 
           // Reset flag

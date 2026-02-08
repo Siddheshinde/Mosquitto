@@ -15,7 +15,7 @@ function Card({ title, value, icon, alert = false, status = false }) {
         <h4 className="card-title">{title}</h4>
       </div>
       <div className="card-value">{value}</div>
-      {alert && <div className="alert-indicator">⚠️ Alert</div>}
+      {alert && <div className="alert-indicator"> Alert</div>}
     </div>
   );
 }

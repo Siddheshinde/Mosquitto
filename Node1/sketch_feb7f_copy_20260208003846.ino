@@ -101,7 +101,7 @@ String encryptData(String plaintext) {
   mbedtls_aes_free(&aes);
   
   if (ret != 0) {
-    Serial.println(" Register with the central server (TPE) Encryption failed");
+    Serial.println("Encryption failed");
     return "";
   }
   
@@ -112,7 +112,7 @@ String encryptData(String plaintext) {
   ret = mbedtls_base64_encode(base64_output, 1024, &base64_len, output, dataLength);
   
   if (ret != 0) {
-    Serial.println(" Register with the central server (TPE) Base64 encoding failed");
+    Serial.println("Base64 encoding failed");
     return "";
   }
   
@@ -130,7 +130,7 @@ String decryptData(String encrypted) {
                                    encrypted.length());
   
   if (ret != 0) {
-    Serial.println(" Register with the central server (TPE) Base64 decode failed");
+    Serial.println("Base64 decode failed");
     return "";
   }
   
@@ -145,7 +145,7 @@ String decryptData(String encrypted) {
   mbedtls_aes_free(&aes);
   
   if (ret != 0) {
-    Serial.println(" Register with the central server (TPE) Decryption failed");
+    Serial.println("Decryption failed");
     return "";
   }
   
@@ -274,7 +274,7 @@ void taskMPU(void *pv) {
       localFall = true;
       fallTriggerTime = millis();
       lastFallTime = millis();
-      Serial.println("🚨 FALL DETECTED");
+      Serial.println("FALL DETECTED");
     }
 
     if (localFall && millis() - fallTriggerTime > FALL_RESET_TIME) {
@@ -310,22 +310,22 @@ void taskCloud(void *pv) {
 
       // Display actual values on Serial Monitor
       Serial.println("\n========== SENSOR DATA ==========");
-      Serial.print("🌡️  Temperature: ");
+      Serial.print("Temperature: ");
       Serial.print(t, 1);
       Serial.println(" °C");
       
-      Serial.print("💧 Humidity: ");
+      Serial.print("Humidity: ");
       Serial.print(h, 1);
       Serial.println(" %");
       
-      Serial.print("❤️  Heart Rate: ");
+      Serial.print("Heart Rate: ");
       Serial.print(b, 1);
       Serial.println(" BPM");
       
-      Serial.print("🧍 Posture: ");
+      Serial.print("Posture: ");
       Serial.println(p);
       
-      Serial.print("🚨 Fall Detected: ");
+      Serial.print("Fall Detected: ");
       Serial.println(f ? "YES" : "NO");
       Serial.println("=================================\n");
 
@@ -353,7 +353,7 @@ void taskCloud(void *pv) {
       if (responseCode > 0) {
         Serial.println("   Data sent to Firebase (encrypted)");
       } else {
-        Serial.println(" Register with the central server (TPE) Failed to send data");
+        Serial.println("Failed to send data");
       }
       
       http.end();
@@ -373,7 +373,7 @@ void taskButton(void *pv) {
 
     // Button pressed
     if (buttonState == LOW && lastButtonState == HIGH) {
-      Serial.println("\n🚨 SOS BUTTON PRESSED");
+      Serial.println("\nSOS BUTTON PRESSED");
       Serial.println("Button State: TRUE");
 
       sosActive = true;
@@ -390,13 +390,13 @@ void taskButton(void *pv) {
         http.PUT(payload);
         http.end();
         
-        Serial.println("📤 Emergency alert sent (encrypted)");
+        Serial.println("Emergency alert sent (encrypted)");
       }
     }
 
     // Auto reset after 30 seconds
     if (sosActive && millis() - sosStartTime >= 30000) {
-      Serial.println("\n✅ SOS AUTO RESET");
+      Serial.println("\nSOS AUTO RESET");
       Serial.println("Button State: FALSE");
 
       sosActive = false;
@@ -412,7 +412,7 @@ void taskButton(void *pv) {
         http.PUT(payload);
         http.end();
         
-        Serial.println("📤 Emergency reset sent (encrypted)");
+        Serial.println("Emergency reset sent (encrypted)");
       }
     }
 
